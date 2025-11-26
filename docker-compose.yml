@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  vulnerable-web:
+    build: ./vulnerable-web
+    container_name: xss_vulnerable
+    ports:
+      - "127.0.0.1:3000:3000"   # bind to localhost only for safety
+    volumes:
+      - ./vulnerable-web/data:/usr/src/app/data
+    environment:
+      - PORT=3000
+    networks:
+      - labnet
+
+  patched-web:
+    build: ./patched-web
+    container_name: xss_patched
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - ./patched-web/data:/usr/src/app/data
+    environment:
+      - PORT=3000
+    networks:
+      - labnet
+
+  attacker:
+    build: ./attacker
+    container_name: xss_attacker
+    depends_on:
+      - vulnerable-web
+    networks:
+      - labnet
+    # no ports published for attacker - it's internal tool only
+
+networks:
+  labnet:
+    driver: bridge

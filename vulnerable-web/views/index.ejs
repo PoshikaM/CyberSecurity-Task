@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Stored XSS demo - VULNERABLE</title>
+</head>
+<body>
+  <h1>Vulnerable Guestbook (Stored XSS)</h1>
+  <form method="post" action="/comment">
+    <input name="name" placeholder="name" />
+    <br/>
+    <textarea name="comment" placeholder="your comment"></textarea>
+    <br/>
+    <button type="submit">Post comment</button>
+  </form>
+
+  <hr/>
+  <h2>Comments</h2>
+  <ul>
+    <% comments.forEach(function(c) { %>
+      <li>
+        <strong><%= c.name %></strong>: 
+        <!-- UNSAFE: rendering raw HTML - this is deliberate to demonstrate Stored XSS -->
+        <%- c.comment %>
+      </li>
+    <% }) %>
+  </ul>
+  <p><em>Note: this page renders stored HTML as-is. If a comment contains &lt;script&gt; JS, it will execute in your browser.</em></p>
+</body>
+</html>
